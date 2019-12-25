@@ -1,0 +1,97 @@
+{
+  "name": "learning-vscode-extension",
+  "displayName": "Learning_VSCode_Extension",
+  "description": "just learning vscode extension maker",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.41.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:listLambdas"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "happyLambda",
+          "title": "HL",
+          "icon": "resources/dark/happyLambda.svg"
+        }
+      ]
+    },
+    "views": {
+      "happyLambda": [
+        {
+          "id": "listLambdas",
+          "name": "AWS Lambda Functions"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "happyLambda.refreshLambdas",
+        "title": "Refresh",
+        "icon":{
+          "light": "resources/light/open-file.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "happyLambda.viewLambda",
+        "title": "View",
+        "icon":{
+          "light": "resources/light/open-file.svg",
+          "dark": "resources/dark/lambda.svg"
+        }
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "happyLambda.refreshLambdas"
+        },
+        {
+          "command": "happyLambda.viewLambda"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "happyLambda.refreshLambdas",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "happyLambda.viewLambda",
+          "when": "view == happyLambda & viewItem == lambdaFn",
+          "group": "inline"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.11.7",
+    "@types/vscode": "^1.41.0",
+    "glob": "^7.1.5",
+    "mocha": "^6.2.2",
+    "typescript": "^3.6.4",
+    "tslint": "^5.20.0",
+    "vscode-test": "^1.2.2"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.596.0"
+  }
+}
