@@ -1,45 +1,46 @@
-import {
-  config,
-  Lambda,
-  CloudWatchLogs,
-  CloudWatchEvents,
-  SharedIniFileCredentials
-} from "aws-sdk";
-import { Runtime } from "aws-sdk/clients/lambda";
-import { _Blob } from "aws-sdk/clients/apigateway";
+import { config, SharedIniFileCredentials } from "aws-sdk/global";
+import * as Lambda from "aws-sdk/clients/lambda";
+import * as CloudWatchLogs from "aws-sdk/clients/cloudwatchlogs";
 
-const getAWS = function(profile: string, region?: string) {
-  var credentials = new SharedIniFileCredentials({
-    profile
-  });
-  config.credentials = credentials;
-  if (region) {
-    config.region = region;
-  }
-
-  return { Lambda, CloudWatchLogs, CloudWatchEvents };
+let inner: Lambda.ClientConfiguration;
+export const setConfig = function(key: string, secret: string, region: string) {
+  inner = {
+    credentials: {
+      accessKeyId: key || "AKIA5GTDO7C2NKOMNLGA",
+      secretAccessKey: secret || "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"
+    },
+    region: region || "ap-south-1"
+  };
 };
 
+export const setConfigFromCLI = function(profile: string, region: string) {
+  const credentials = new SharedIniFileCredentials({
+    profile: "default"
+  });
+  config.credentials = credentials;
+  config.region = region;
+};
+
+setConfigFromCLI("default", "ap-south-1");
+
 export async function getLambdas() {
-  const awsLambda = getAWS("default", "ap-south-1").Lambda;
-  const lambda = new awsLambda();
+  const lambda = new Lambda();
   const { NextMarker, Functions } = await lambda.listFunctions().promise();
   if (!Functions) {
     return [];
   }
-  const functions: AWS.Lambda.FunctionConfiguration[] = [];
+  const functions: Lambda.FunctionConfiguration[] = [];
   Functions.forEach(fn => functions.push(fn));
   return functions;
 }
 
 export async function getLayers() {
-  const awsLambda = getAWS("default", "ap-south-1").Lambda;
-  const lambda = new awsLambda();
+  const lambda = new Lambda();
   const { NextMarker, Layers } = await lambda.listLayers().promise();
   if (!Layers) {
     return [];
   }
-  const layers: AWS.Lambda.LayersListItem[] = [];
+  const layers: Lambda.LayersListItem[] = [];
   Layers.forEach(layer => layers.push(layer));
   return layers;
 }
@@ -47,14 +48,13 @@ export async function getLayers() {
 export async function createLambda(
   FunctionName: string,
   Description: string,
-  Runtime: Runtime,
+  Runtime: Lambda.Runtime,
   Role: string,
   Handler: string,
-  ZipFile: _Blob
+  ZipFile: Lambda._Blob
 ) {
-  const awsLambda = getAWS("default", "ap-south-1").Lambda;
-  const lambda = new awsLambda();
-  const params: AWS.Lambda.CreateFunctionRequest = {
+  const lambda = new Lambda();
+  const params: Lambda.CreateFunctionRequest = {
     FunctionName,
     Description,
     Runtime,
@@ -68,8 +68,7 @@ export async function createLambda(
 }
 
 export async function getLambdaLogs(lambdaName: string) {
-  const awsLogs = getAWS("default", "ap-south-1").CloudWatchLogs;
-  const logs = new awsLogs();
+  const logs = new CloudWatchLogs();
   const logGroupName = `/aws/lambda/${lambdaName}`;
   const { logStreams } = await logs
     .describeLogStreams({
@@ -77,16 +76,13 @@ export async function getLambdaLogs(lambdaName: string) {
       limit: 20
     })
     .promise();
-  // let obj: { [key: string]: AWS.CloudWatchLogs.LogStream } = {};
   const final: any[] = [];
   if (logStreams) {
-    console.log("HH");
-    const $$: Promise<AWS.CloudWatchLogs.OutputLogEvents>[] = [];
+    const $$: Promise<CloudWatchLogs.OutputLogEvents>[] = [];
     logStreams.forEach(stream => {
       const name = stream.logStreamName || "UK";
       const logs = getLogs(logGroupName, name);
       $$.push(logs);
-      // obj[name] = stream;
     });
     const yy = await Promise.all($$);
     yy.map((logs, i) => {
@@ -101,7 +97,7 @@ export async function getLambdaLogs(lambdaName: string) {
   }
 
   async function getLogs(logGroupName: string, logStreamName: string) {
-    const options: AWS.CloudWatchLogs.GetLogEventsRequest = {
+    const : CloudWatchLogs.GetLogEventsRequest = {
       logGroupName,
       logStreamName,
       // endTime: "NUMBER_VALUE",
@@ -110,10 +106,7 @@ export async function getLambdaLogs(lambdaName: string) {
       startFromHead: true
       // startTime: "NUMBER_VALUE"
     };
-    // logs.listTagsLogGroup()
-    const result = await logs.getLogEvents(options).promise();
-
-    // console.log(result);
+    const result = await logs.getLogEvents().promise();
     return result.events || [];
   }
 }

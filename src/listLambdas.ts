@@ -1,12 +1,19 @@
-import * as vscode from "vscode";
-import * as path from "path";
+import {
+  TreeDataProvider,
+  EventEmitter,
+  Event,
+  TreeItem,
+  Command,
+  TreeItemCollapsibleState
+} from "vscode";
+import { join } from "path";
 import { getLambdas } from "./aws";
 
-export class LambdaNodeProvider implements vscode.TreeDataProvider<LambdaFn> {
-  private _onDidChangeTreeData: vscode.EventEmitter<
+export class LambdaNodeProvider implements TreeDataProvider<LambdaFn> {
+  private _onDidChangeTreeData: EventEmitter<
     LambdaFn | undefined
-  > = new vscode.EventEmitter<LambdaFn | undefined>();
-  readonly onDidChangeTreeData: vscode.Event<LambdaFn | undefined> = this
+  > = new EventEmitter<LambdaFn | undefined>();
+  readonly onDidChangeTreeData: Event<LambdaFn | undefined> = this
     ._onDidChangeTreeData.event;
 
   constructor(private workspaceRoot?: string) {}
@@ -15,7 +22,7 @@ export class LambdaNodeProvider implements vscode.TreeDataProvider<LambdaFn> {
     this._onDidChangeTreeData.fire();
   }
 
-  getTreeItem(element: LambdaFn): vscode.TreeItem {
+  getTreeItem(element: LambdaFn): TreeItem {
     return element;
   }
 
@@ -32,7 +39,7 @@ export class LambdaNodeProvider implements vscode.TreeDataProvider<LambdaFn> {
         lambda.FunctionName,
         lambda.FunctionArn,
         lambda.FunctionName,
-        vscode.TreeItemCollapsibleState.None,
+        TreeItemCollapsibleState.None,
         {
           command: "happyLambda.viewLambda",
           title: "View",
@@ -43,13 +50,13 @@ export class LambdaNodeProvider implements vscode.TreeDataProvider<LambdaFn> {
   }
 }
 
-export class LambdaFn extends vscode.TreeItem {
+export class LambdaFn extends TreeItem {
   constructor(
     public readonly label: string | undefined,
     private arn: string | undefined,
     private name: string | undefined,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command
+    public readonly collapsibleState: TreeItemCollapsibleState,
+    public readonly command?: Command
   ) {
     super(label || "No Name", collapsibleState);
   }
@@ -63,36 +70,9 @@ export class LambdaFn extends vscode.TreeItem {
   }
 
   iconPath = {
-    light: path.join(__filename, "..", "..", "resources", "dark", "lambda.svg"),
-    dark: path.join(__filename, "..", "..", "resources", "dark", "lambda.svg")
+    light: join(__filename, "..", "..", "resources", "dark", "lambda.svg"),
+    dark: join(__filename, "..", "..", "resources", "dark", "lambda.svg")
   };
 
   contextValue = "lambdaFn";
 }
-
-// private async getLambda(LambdaName: string): Promise<LambdaFn | null> {
-//   const lambdas = await getLambdas();
-//   if (lambdas.length === 0) {
-//     return null;
-//   } else {
-//     let l: LambdaFn;
-//     lambdas.forEach(lambda => {
-//       if (lambda.FunctionName === LambdaName) {
-//         const ll = new LambdaFn(
-//           lambda.FunctionName,
-//           lambda.FunctionArn,
-//           lambda.FunctionName,
-//           vscode.TreeItemCollapsibleState.None,
-//           {
-//             command: "happyLambda.viewLambda",
-//             title: "View"
-//             //   arguments: [moduleName]
-//           }
-//         );
-//         l = ll;
-//         return;
-//       }
-//     });
-//     return l;
-//   }
-// }

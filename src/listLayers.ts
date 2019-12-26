@@ -1,12 +1,19 @@
-import * as vscode from "vscode";
-import * as path from "path";
+import {
+  TreeDataProvider,
+  EventEmitter,
+  Event,
+  TreeItem,
+  Command,
+  TreeItemCollapsibleState
+} from "vscode";
+import { join } from "path";
 import { getLayers } from "./aws";
 
-export class LayerNodeProvider implements vscode.TreeDataProvider<Layer> {
-  private _onDidChangeTreeData: vscode.EventEmitter<
+export class LayerNodeProvider implements TreeDataProvider<Layer> {
+  private _onDidChangeTreeData: EventEmitter<
     Layer | undefined
-  > = new vscode.EventEmitter<Layer | undefined>();
-  readonly onDidChangeTreeData: vscode.Event<Layer | undefined> = this
+  > = new EventEmitter<Layer | undefined>();
+  readonly onDidChangeTreeData: Event<Layer | undefined> = this
     ._onDidChangeTreeData.event;
 
   constructor(private workspaceRoot?: string) {}
@@ -15,7 +22,7 @@ export class LayerNodeProvider implements vscode.TreeDataProvider<Layer> {
     this._onDidChangeTreeData.fire();
   }
 
-  getTreeItem(element: Layer): vscode.TreeItem {
+  getTreeItem(element: Layer): TreeItem {
     return element;
   }
 
@@ -32,7 +39,7 @@ export class LayerNodeProvider implements vscode.TreeDataProvider<Layer> {
         layer.LayerName,
         layer.LayerArn,
         layer.LayerName,
-        vscode.TreeItemCollapsibleState.None,
+        TreeItemCollapsibleState.None,
         {
           command: "happyLambda.viewLayer",
           title: "View",
@@ -43,13 +50,13 @@ export class LayerNodeProvider implements vscode.TreeDataProvider<Layer> {
   }
 }
 
-export class Layer extends vscode.TreeItem {
+export class Layer extends TreeItem {
   constructor(
     public readonly label: string | undefined,
     private arn: string | undefined,
     private name: string | undefined,
-    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command
+    public readonly collapsibleState: TreeItemCollapsibleState,
+    public readonly command?: Command
   ) {
     super(label || "No Name", collapsibleState);
   }
@@ -63,8 +70,8 @@ export class Layer extends vscode.TreeItem {
   }
 
   iconPath = {
-    light: path.join(__filename, "..", "..", "resources", "dark", "lambda.svg"),
-    dark: path.join(__filename, "..", "..", "resources", "dark", "lambda.svg")
+    light: join(__filename, "..", "..", "resources", "dark", "lambda.svg"),
+    dark: join(__filename, "..", "..", "resources", "dark", "lambda.svg")
   };
 
   contextValue = "layer";

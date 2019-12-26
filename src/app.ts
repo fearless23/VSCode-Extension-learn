@@ -13,12 +13,13 @@ const vscMsg = function(msg: string) {
 
 const onActivate = function() {
   try {
+
     const lnp = new LambdaNodeProvider();
     vscode.window.registerTreeDataProvider("listLambdas", lnp);
 
     vscode.commands.registerCommand(
       "happyLambda.viewLambda",
-      async (x: AWS.Lambda.FunctionConfiguration) => {
+      async (x) => {
         const y = await getLambdaLogs(x.FunctionName || "");
         wrapperView({
           html: `<pre>${JSON.stringify(x, null, 2)}</pre><pre>${JSON.stringify(
@@ -39,7 +40,7 @@ const onActivate = function() {
     vscode.window.registerTreeDataProvider("listLayers", lynp);
     vscode.commands.registerCommand(
       "happyLambda.viewLayer",
-      (x: AWS.Lambda.LayersListItem) => {
+      (x) => {
         wrapperView({
           html: `<pre>${JSON.stringify(x, null, 2)}</pre>`,
           name: x.LayerName || "Layer"
