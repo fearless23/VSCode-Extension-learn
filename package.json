@@ -28,6 +28,10 @@
         {
           "id": "listLambdas",
           "name": "AWS Lambda Functions"
+        },
+        {
+          "id": "listLayers",
+          "name": "AWS Layers"
         }
       ]
     },
@@ -35,16 +39,32 @@
       {
         "command": "happyLambda.refreshLambdas",
         "title": "Refresh",
-        "icon":{
-          "light": "resources/light/open-file.svg",
+        "icon": {
+          "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
         }
       },
       {
         "command": "happyLambda.viewLambda",
         "title": "View",
-        "icon":{
-          "light": "resources/light/open-file.svg",
+        "icon": {
+          "light": "resources/light/lambda.svg",
+          "dark": "resources/dark/lambda.svg"
+        }
+      },
+      {
+        "command": "happyLambda.refreshLayers",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "happyLambda.viewLayer",
+        "title": "View",
+        "icon": {
+          "light": "resources/light/lambda.svg",
           "dark": "resources/dark/lambda.svg"
         }
       }
@@ -61,6 +81,11 @@
       "view/title": [
         {
           "command": "happyLambda.refreshLambdas",
+          "when": "viewItem == lambdaFn ",
+          "group": "navigation"
+        },
+        {
+          "command": "happyLambda.refreshLayers",
           "group": "navigation"
         }
       ],
@@ -69,6 +94,11 @@
           "command": "happyLambda.viewLambda",
           "when": "view == happyLambda & viewItem == lambdaFn",
           "group": "inline"
+        },
+        {
+          "command": "happyLambda.viewLayer",
+          "when": "view == happyLambda & viewItem == layer",
+          "group": "inline"
         }
       ]
     }
@@ -76,19 +106,16 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile",
-    "test": "node ./out/test/runTest.js"
+    "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
+    "@types/aws-sdk": "^2.7.0",
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.11.7",
     "@types/vscode": "^1.41.0",
-    "glob": "^7.1.5",
-    "mocha": "^6.2.2",
-    "typescript": "^3.6.4",
     "tslint": "^5.20.0",
+    "typescript": "^3.6.4",
     "vscode-test": "^1.2.2"
   },
   "dependencies": {

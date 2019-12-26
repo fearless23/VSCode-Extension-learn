@@ -46,12 +46,9 @@ export async function wrapperView(a: helperView) {
           h1, h2, h3 {
             padding-top: 1em
           }
-          div{
-              color: red;
-          }
           pre {
-            font-size:1.5em;
-            line-height:1.6;
+            font-size:1.2em;
+            line-height:1.5;
             padding: 1em;
             border-radius: 3px;
             overflow: auto;

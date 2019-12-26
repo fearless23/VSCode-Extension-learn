@@ -26,27 +26,20 @@ export class LambdaNodeProvider implements vscode.TreeDataProvider<LambdaFn> {
 
   private async getLambdasForConfig(): Promise<LambdaFn[]> {
     const lambdas = await getLambdas();
-    if (lambdas.length === 0) {
-      return [];
-    } else {
-      let x: LambdaFn[] = [];
-      lambdas.forEach(lambda => {
-        const l = new LambdaFn(
-          lambda.FunctionName,
-          lambda.FunctionArn,
-          lambda.FunctionName,
-          vscode.TreeItemCollapsibleState.None,
-          {
-            command: "happyLambda.viewLambda",
-            title: "View",
-            arguments: [lambda],
 
-          }
-        );
-        x.push(l);
-      });
-      return x;
-    }
+    return lambdas.map(lambda => {
+      return new LambdaFn(
+        lambda.FunctionName,
+        lambda.FunctionArn,
+        lambda.FunctionName,
+        vscode.TreeItemCollapsibleState.None,
+        {
+          command: "happyLambda.viewLambda",
+          title: "View",
+          arguments: [lambda]
+        }
+      );
+    });
   }
 }
 
@@ -70,27 +63,9 @@ export class LambdaFn extends vscode.TreeItem {
   }
 
   iconPath = {
-    light: path.join(
-      __filename,
-      "..",
-      "..",
-      "resources",
-      "dark",
-      "happyLambda.svg"
-    ),
-    dark: path.join(
-      __filename,
-      "..",
-      "..",
-      "resources",
-      "dark",
-      "happyLambda.svg"
-    )
+    light: path.join(__filename, "..", "..", "resources", "dark", "lambda.svg"),
+    dark: path.join(__filename, "..", "..", "resources", "dark", "lambda.svg")
   };
-  get viewLambda() {
-    console.log("THIS VIEW LAMBDA");
-    return 2;
-  }
 
   contextValue = "lambdaFn";
 }
