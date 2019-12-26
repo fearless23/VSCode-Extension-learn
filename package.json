@@ -6,6 +6,10 @@
   "engines": {
     "vscode": "^1.41.0"
   },
+  "repository": {
+    "type": "github",
+    "url": ""
+  },
   "categories": [
     "Other"
   ],
@@ -120,5 +124,6 @@
   },
   "dependencies": {
     "aws-sdk": "^2.596.0"
-  }
+  },
+  "publisher": "fearless"
 }
