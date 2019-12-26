@@ -1,17 +1,23 @@
-import * as AWS from "aws-sdk";
+import {
+  config,
+  Lambda,
+  CloudWatchLogs,
+  CloudWatchEvents,
+  SharedIniFileCredentials
+} from "aws-sdk";
 import { Runtime } from "aws-sdk/clients/lambda";
 import { _Blob } from "aws-sdk/clients/apigateway";
 
 const getAWS = function(profile: string, region?: string) {
-  var credentials = new AWS.SharedIniFileCredentials({
+  var credentials = new SharedIniFileCredentials({
     profile
   });
-  AWS.config.credentials = credentials;
+  config.credentials = credentials;
   if (region) {
-    AWS.config.region = region;
+    config.region = region;
   }
 
-  return AWS;
+  return { Lambda, CloudWatchLogs, CloudWatchEvents };
 };
 
 export async function getLambdas() {
