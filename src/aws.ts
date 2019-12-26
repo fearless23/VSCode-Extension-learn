@@ -3,11 +3,15 @@ import * as Lambda from "aws-sdk/clients/lambda";
 import * as CloudWatchLogs from "aws-sdk/clients/cloudwatchlogs";
 
 let inner: Lambda.ClientConfiguration;
-export const setConfig = function(key: string, secret: string, region: string) {
+export const setConfig = function(
+  key: string,
+  secret: string,
+  region?: string
+) {
   inner = {
     credentials: {
-      accessKeyId: key || "AKIA5GTDO7C2NKOMNLGA",
-      secretAccessKey: secret || "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"
+      accessKeyId: key,
+      secretAccessKey: secret
     },
     region: region || "ap-south-1"
   };
@@ -97,7 +101,7 @@ export async function getLambdaLogs(lambdaName: string) {
   }
 
   async function getLogs(logGroupName: string, logStreamName: string) {
-    const : CloudWatchLogs.GetLogEventsRequest = {
+    const options: CloudWatchLogs.GetLogEventsRequest = {
       logGroupName,
       logStreamName,
       // endTime: "NUMBER_VALUE",
@@ -106,7 +110,7 @@ export async function getLambdaLogs(lambdaName: string) {
       startFromHead: true
       // startTime: "NUMBER_VALUE"
     };
-    const result = await logs.getLogEvents().promise();
+    const result = await logs.getLogEvents(options).promise();
     return result.events || [];
   }
 }
