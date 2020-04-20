@@ -19,7 +19,7 @@ export const setConfig = function(
 
 export const setConfigFromCLI = function(profile: string, region: string) {
   const credentials = new SharedIniFileCredentials({
-    profile: "default"
+    profile
   });
   config.credentials = credentials;
   config.region = region;
